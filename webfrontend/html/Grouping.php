@@ -24,6 +24,7 @@ function CreateStereoPair() {
 	$ChannelMapSet = (string)$rinconlf.':LF,LF;'.$rinconrf.':RF,RF';
 	$sonos = new PHPSonos($sonoszone[$lf][0]);
 	$temp = $sonos->CreateStereoPair($ChannelMapSet);
+	LOGGING('A Stereo Pair called '.$lf.' has been created',6);
 }
 
 
@@ -46,8 +47,10 @@ function CreateStereoPair() {
 	try {
 		$temp = $sonos->SeperateStereoPair($ChannelMapSet);
 	} catch (Exception $e) {
-		trigger_error("The specified zones are not a stereoparar or the syntax is reversed! Please correct", E_USER_ERROR);
+		LOGGING("The specified zones are not a stereopair or the zones in syntax is reversed! Please correct", 3);
+		exit;
 	}
+	LOGGING('A Stereo Pair ('.$lf.', '.$rf.') has been seperated into Single Zones.',6);
  }
 
 
@@ -64,26 +67,31 @@ function CreateStereoPair() {
 	
 	// check if member for pairing has been entered
 	if (empty($rf)) {
-		trigger_error("Please specify the second zone for creating a stereopair!!", E_USER_ERROR);
+		LOGGING("Please specify the second zone for creating a stereopair!!", 3);
+		exit;
 	}
 	$lfbox = $config['sonoszonen'][$lf][2];
 	$rfbox = $config['sonoszonen'][$rf][2];
 	// check if zones are not doubled in syntax
 	if ($lf == $rf) {
-		trigger_error("The Zone ".$rf." can not be added itself to ".$lf.". Please correct!!", E_USER_ERROR);
+		LOGGING("The Zone ".$rf." can not be added itself to ".$lf.". Please correct!!", 3);
+		exit;
 	}
 		// check if zones are supported devices for pairing
 		$lfmod = checkZonePairingAllowed($lfbox);
 		if ($lfmod != true) {
-			trigger_error("The Zone ".$lf." can't be used to create a stereopair, only PLAY: 1, PLAY: 3 and PLAY: 5 are allowed. Please correct!!", E_USER_ERROR);
+			LOGGING("The Zone ".$lf." can't be used to create a stereopair, only PLAY: 1, PLAY: 3 and PLAY: 5 are allowed. Please correct!!", 3);
+			exit;
 		}
 			$rfmod = checkZonePairingAllowed($rfbox);
 			if ($rfmod != true) {
-				trigger_error("The Zone ".$rf." can't be used to create a stereopair, only PLAY: 1, PLAY: 3 and PLAY: 5 are allowed. Please correct!!!!", E_USER_ERROR);
+				LOGGING("The Zone ".$rf." can't be used to create a stereopair, only PLAY: 1, PLAY: 3 and PLAY: 5 are allowed. Please correct!!!!", 3);
+				exit;
 			}
 				// check if both zones are exactly the same model
 				if ($lfbox != $rfbox) {
-					trigger_error("The entered Zone ".$rf." isn't the same type as zone ".$lf.". Only the same models can be used to create a stereopair. Please correct!!", E_USER_ERROR);
+					LOGGING("The entered Zone ".$rf." isn't the same type as zone ".$lf.". Only the same models can be used to create a stereopair. Please correct!!", 3);
+					exit;
 				} 
  }
  
@@ -100,13 +108,15 @@ function CreateStereoPair() {
 	
 	// check if member for pairing has been entered
 	if (empty($rf)) {
-		trigger_error("Please enter the second zone to seperate the stereopair!!", E_USER_ERROR);
+		LOGGING("Please enter the second zone to seperate the stereopair!!", 3);
+		exit;
 	}
 	$lfbox = $config['sonoszonen'][$lf][2];
 	$rfbox = $config['sonoszonen'][$rf][2];
 	// check if zones are not doubled in syntax
 	if ($lf == $rf) {
-		trigger_error("The Zone ".$rf." can't remove itself. Please correct!!", E_USER_ERROR);
+		LOGGING("The Zone ".$rf." can't remove itself. Please correct!!", 3);
+		exit;
 	}
  
  }
@@ -369,7 +379,7 @@ function group_all() {
 			$sonos->SetAVTransportURI("x-rincon:" . $config['sonoszonen'][$master][1]); 
 		}
 	}
-	logging();
+	LOGGING('All Sonos Player has been grouped',6);
 }
 
 	
@@ -388,7 +398,7 @@ function ungroup_all() {
 			$sonos = new PHPSonos($sonoszone[$zone][0]);
 			$sonos->SetQueue("x-rincon-queue:" . $config['sonoszonen'][$zone][1] . "#0");
 		}
-	logging();
+	LOGGING('All Sonos Player has been ungrouped',6);
 }
 
 
@@ -405,13 +415,14 @@ function addmember() {
 	$member = $_GET['member'];
 	$member = explode(',', $member);
 	if (in_array($master, $member)) {
-		trigger_error("The zone ".$master." could not be entered as member again. Please remove from Syntax '&member=".$master."' !", E_USER_ERROR);
+		LOGGING("The zone ".$master." could not be entered as member again. Please remove from Syntax '&member=".$master."' !", 3);
 	}
 	foreach ($member as $value) {
 		$masterrincon = $config['sonoszonen'][$master][1];
 		$sonos = new PHPSonos($sonoszone[$value][0]);
 		$sonos->SetAVTransportURI("x-rincon:" . $masterrincon);
 	}
+	LOGGING('Member(s) has been added to Zone',6);
 }
 
 
@@ -432,6 +443,7 @@ function removemember() {
 		$sonos = new PHPSonos($sonoszone[$value][0]);
 		$sonos->BecomeCoordinatorOfStandaloneGroup();
 	}
+	LOGGING('Zones has been removed from Group',6);
 }
 
 

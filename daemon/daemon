@@ -10,9 +10,24 @@
 # Name this file "daemon" in your plugin-archive. It will be renamed to NAME
 # during installation
 
-if [ -x /usr/bin/logger ]
+shareavailable=`cat /etc/samba/smb.conf | grep plugindata | wc -l`
+
+if [ $shareavailable = 0 ]
 then
-    /usr/bin/logger "This is just a sample DAEMON script from Sample Plugin"
+	# to ensure that Sonos can read from folder structure
+	echo " " >> $LBHOMEDIR/system/samba/smb.conf
+	echo "[plugindata]" >> $LBHOMEDIR/system/samba/smb.conf
+	echo "   comment = LoxBerry Plugin Data" >> $LBHOMEDIR/system/samba/smb.conf
+	echo "   path = $LBPDATA" >> $LBHOMEDIR/system/samba/smb.conf
+	echo "   guest ok = yes" >> $LBHOMEDIR/system/samba/smb.conf
+	echo "   read only = yes" >> $LBHOMEDIR/system/samba/smb.conf
+	echo "   directory mask = 0700" >> $LBHOMEDIR/system/samba/smb.conf
+	echo "   create mask = 0700" >> $LBHOMEDIR/system/samba/smb.conf
+	echo "   follow symlinks = yes" >> $LBHOMEDIR/system/samba/smb.conf
+	echo "   wide links = yes" >> $LBHOMEDIR/system/samba/smb.conf
+	#echo "   Sonos plugin requires a reboot to enable the TTS share" >> $LBHOMEDIR/log/system_tmpfs/reboot.required
+	# Restart Samba Server
+	systemctl reload smbd.service
 fi
 
 exit 0

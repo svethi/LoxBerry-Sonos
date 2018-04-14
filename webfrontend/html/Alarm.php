@@ -17,7 +17,8 @@ function turn_off_alarms() {
 	
 	$filename = $home.'/webfrontend/html/plugins/'.$psubfolder.'/tmp_alarms.json';
 	if (file_exists($filename)) {
-		trigger_error("Sonos alarms could not be disabled! A file already exists, please delete before executing or run action=alarmon.", E_USER_ERROR);
+		LOGGING("Sonos alarms could not be disabled! A file already exists, please delete before executing or run action=alarmon.", 3);
+		exit;
 	}
 	$sonos = new PHPSonos($sonoszone[$master][0]);
 	$alarm = $sonos->ListAlarms();
@@ -28,6 +29,7 @@ function turn_off_alarms() {
 		$alarm[$i]['Enabled'] = 0, $alarm[$i]['RoomUUID'], $alarm[$i]['ProgramURI'], $alarm[$i]['ProgramMetaData'], 
 		$alarm[$i]['PlayMode'], $alarm[$i]['Volume'], $alarm[$i]['IncludeLinkedZones']);
 	}
+	LOGGING("All Sonos alarms has been turned off.", 6);
 }
 
 
@@ -42,7 +44,8 @@ function restore_alarms() {
 	
 	$filename = $home.'/webfrontend/html/plugins/'.$psubfolder.'/tmp_alarms.json';
 	if (!file_exists($filename)) {
-		trigger_error("Sonos alarms could not be restored! There is no file available to restore.", E_USER_ERROR);
+		LOGGING("Sonos alarms could not be restored! There is no file available to restore.", 3);
+		exit;
 	}
 	$alarm = File_Get_Array_From_JSON($filename);
 	$quan = count($alarm);
@@ -52,6 +55,7 @@ function restore_alarms() {
 		$alarm[$i]['PlayMode'], $alarm[$i]['Volume'], $alarm[$i]['IncludeLinkedZones']);
 	}
 	unlink($filename); 
+	LOGGING("All Sonos alarms has been switched on again.", 6);
 }
 
 
@@ -73,8 +77,9 @@ function sleeptimer() {
 			$timer = '00:'.$_GET['timer'].':00';
 			$timer = $sonos->Sleeptimer($timer);
 		}
+		LOGGING("Sleeptimer has been switched on. Time to sleep is: ".$timer, 6);
 	} else {
-		trigger_error('The entered time is not correct, please correct', E_USER_NOTICE);
+		LOGGING('The entered time is not correct, please correct', 4);
 	}
 }
 

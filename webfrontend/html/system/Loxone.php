@@ -54,7 +54,7 @@
 				array_push($tmp_array, $message);
 			}
 		} else {
-			trigger_error("Can't create UDP socket to $server_ip", E_USER_WARNING);
+			LOGGING("Can't create UDP socket to $server_ip", 4);
 		}
 		// fügt die Offline Zonen hinzu
 		if (!empty($sonos_array_diff)) {
@@ -67,11 +67,11 @@
 		try {
 			socket_sendto($socket, $UDPmessage, strlen($UDPmessage), 0, $server_ip, $server_port);
 		} catch (Exception $e) {
-			trigger_error("The connection to Loxone could not be initiated!", E_USER_NOTICE);	
+			LOGGING("The connection to Loxone could not be initiated!", 4);	
 		}
 		socket_close($socket);
 	} else { 
-		trigger_error("Data transmission to Loxone is not active. Please activate!", E_USER_NOTICE); 
+		LOGGING("Data transmission to Loxone is not active. Please activate!", 4); 
 	}
 }
 
@@ -84,7 +84,7 @@
 
  function sendTEXTdata() {
 	global $config, $countms, $sonoszone, $sonos, $lox_ip, $home, $sonoszonen, $tmp_lox; 
-		
+	
 	if($config['LOXONE']['LoxDaten'] == 1) {	
 		$lox_ip		 = $tmp_lox[$config['LOXONE']['Loxone']]['IPADDRESS'];
 		$lox_port 	 = $tmp_lox[$config['LOXONE']['Loxone']]['PORT'];
@@ -136,13 +136,13 @@
 						$handle = @get_file_content("http://$loxuser:$loxpassword@$loxip/dev/sps/io/int_$zone/$valuesplit[1]"); // Nur Interpreteninfo für Loxone
 						$handle = @get_file_content("http://$loxuser:$loxpassword@$loxip/dev/sps/io/source_$zone/$source"); // Radio oder Playliste
 					} catch (Exception $e) {
-						trigger_error("The connection to Loxone could not be initiated!", E_USER_NOTICE);	
+						LOGGING("The connection to Loxone could not be initiated!", 4);	
 					}							
 				echo '<PRE>';
 			}
 		}
 	} else { 
-		trigger_error("Data transmission to Loxone is not active. Please activate!", E_USER_NOTICE); 
+		LOGGING("Data transmission to Loxone is not active. Please activate!", 4); 
 	}
  }
  
@@ -167,9 +167,32 @@
 	try {
 		$handle = fopen("http://$loxuser:$loxpassword@$loxip/dev/sps/io/S-Error/''", "r");
 	} catch (Exception $e) {
-		trigger_error("The error message could not be deleted!", E_USER_NOTICE);	
+		LOGGING("The error message could not be deleted!", 4);	
 	}							
 	echo '<PRE>';
+ }
+ 
+ 
+ 
+ 
+ function check_playing($i)  {
+	global $master, $config, $sonoszone, $i;
+	#$i = 0;
+	foreach ($sonoszone as $player => $ip) {
+		$sonos = new PHPSonos($ip[0]); //Slave Sonos ZP IPAddress
+		$running = $sonos->GetTransportInfo();
+		#echo $r = "Zone: ".$player." hat Status: ".$running."<br>"; 
+		if ($running == "1" ) {
+			echo "Zone: ".$player."<br>";
+			$i++;
+		}
+	}
+	echo $i;
+	if ($i < 1) {
+		exit;
+	} else {
+		return $i;
+	}
  }
 
 ?>

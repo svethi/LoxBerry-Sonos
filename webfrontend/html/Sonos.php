@@ -2,137 +2,13 @@
 
 ##############################################################################################################################
 #
-# Version: 	2.1.7
-# Datum: 	07.01.2018
-# veröffentlicht in: http://plugins.loxberry.de/
+# Version: 	3.0.2
+# Datum: 	10.03.2018
+# veröffentlicht in: https://github.com/Liver64/LoxBerry-Sonos/releases
 # 
-# Change History:
-# ----------------------------------------------------------------------------------------------------------------------------
-# 1.0.0		Initiales Release des Plugin (Stable Version)
-# 1.0.1		[Feature] Online Provider Amazon Polly hinzugefügt
-# 			[Feature] Offline Engine Pico2Wave hinzugefügt
-#			[Bugfix] ivona_tts.php: Großschreibung der Endung .MP3 in .mp3 geändert. Problem trat außer bei PLAY:3 und PLAY:5 bei allen anderen Modellen auf
-#			[Bugfix] MP3path in der Config auf Kleinschreibung korrigiert (wird per Installationsscript korrigiert)
-#					 Beim Abspielen von gespeicherten MP3 Files gabe es Probleme dass das angegebene File nicht gefunden wurde.
-# 			[Feature] Online Provider responsiveVoice hinzugefügt
-#			[Feature] Für Non-LoxBerry User besteht nun die Möglichkeit in ihrer Config die pws: für Wunderground anzugeben
-# 1.0.2		[Bugfix] Fehlernachricht an Loxone und Zurücksetzen des Fehlers korrigiert. Funktion war nicht aktiv.
-#			[Bugfix] UDP-Port für Inbound Daten korrigiert. Skript nimmt jetzt UDP-Port aus der Plugin Config statt der MS Config.
-# 1.0.3     [Bugfix] Support für XAMPP Windows hinzugefügt
-#			[Feature] Online Provider Google hinzugefügt
-#			[Bugfix] Korrektur bei Einzel T2S aus Gruppe heraus
-# 1.0.4		[New] Datei grouping.php hinzugefügt
-#			[New] Datei helper.php hinzugefügt
-#			[New] Datei text2speech.php hinzugefügt
-#			[Bugfix] Support für Stereopaar hinzugefügt
-#			[Feature] Neue Funktion createstereopair die aus zwei gleichen Modellen ein Stereopaar erstellt. Die zone=<DEINE ZONE> 
-#					  ist dann der Raumname des neuen Paares
-#			[Feature] Neue Funktion seperatestereopair die ein bestehendes Stereopaar wieder trennt
-#			[Feature] delcoord --> Subfunction für Gruppenmanagement (RinconID von Member)
-# 1.0.5		[Feature] playmode ist in case insensitive nutzbar
-#			[Bugfix] Funktion Softstop überarbeitet. Es wird solange gespielt bis die Lautstärke 0 ist, dann Pause betätigt
-#					 und die Lautstärke wieder auf den Wert vor Softstop angehoben.
-# 1.0.6		[Bugfix] network.php geändert - Fehler beim Scannen der Zonen bei Neuinstallation korrigiert
-# 2.0.0		[Feature] Parameter rampto für Radiosender hinzugefügt
-#			[Feature] Neuer Text Eingangsparameter für Lox Daten Übertragung hinzugefügt (Radio=1 oder Playlist=2)
-#					  Neuer UDP Parameter für Lox Daten Übertragung hinzugefügt (Single Zone=1, Master=3 oder Member=3)
-#			[Bugfix] addmember/removemember gefixt um mehr als eine Zone zum Master hinzuzufügen
-#			[Bugfix] Fehlermeldung an Loxone Text Eingangsverbinder falls ein Fehler im Sonos Plugin auftrat
-#			[Bugfix] Die Eingangsverbindung zu Loxone wurde optimiert, es wird nur noch MINISERVER1 mit lokaler IP unterstützt.
-#			[Feature] zusätzliche Parameter radio&radio=SENDER und playlist&playlist=NAME DER PLAYLISTE (gilt für Zone als auch für Gruppe)
-#			[Feature] vereinfachte T2S Durchsage mit parameter 'say'. Es gibt keine Differenzierung mehr zwischen Gruppen- oder Einzel-
-#			          durchsage. (Details siehe Wiki)
-#			[Feature] Multilinguale Sprachansagen für alle Engines hinzugefügt (Details siehe Wiki).
-#					  AWS Polly SDK nicht mehr notwendig
-#			[Bugfix] Komplette Überarbeitung der Gruppenfunktionen bzw. Gruppendurchsagen
-# 2.0.1		[Bugfix] nextradio optimiert um Änderungen von Sonos zu korrigieren (siehe Wiki)
-#			[Bugfix] Korrektur der Lautstärke bei Gruppendurchsage
-#			[Bugfix] Sonos Ansage optimiert: Bei Playliste Titel und Interpret Ansage, bei Radio Sender Ansage
-#			[Feature] Pollenflug Ansage (Quelle: Deutscher Wetterdienst)
-#			[Feature] Wetterhinweis bzw. Wetterwarnung Ansage (Quelle: Deutscher Wetterdienst)
-# 			[Bugfix] T2S Engine Ivona entfernt da Service zum 30.06.2017 eingestellt wird.
-# 2.0.2		[Bugfix] Pollen und Wetterwarnung Ansage korrigiert. Es werden jetzt jeweils Ansagen getätigt.
-# 2.0.3		[Bugfix] Es wird nur angesagt falls eine Wetterwarnung vorliegt.
-#			[Bugfix] Umlaute bei Nutzung von VoiceRSS korrigiert
-# 			[Feature] Auswahlmöglichkeit des Miniservers für die Schnittstelle zu Loxone in der Config einstellbar
-#			[Bugfix] Datenübertragung bei Standardbefehlen optimiert
-#			[Bugfix] Gruppenmanagement optmiert
-#			[Feature] Möglichkeit der gleichzeitigen Gruppierung bei der Auswahl von Radio bzw. Playlisten
-# 2.0.4		[Bugfix] Broadcast IP beim Scannen hinzugefügt
-#			[Bugfix] Sortierfunktion der Zonen korrigiert	
-# 2.0.5		[Feature] Möglichkeit zum Abspielen von T2S im batch modus (siehe Wiki)
-#			[Bugfix] Fehler Meldungen auf der Config Seite gefixt
-#			[Bugfix] Sortierfunktion der Zonen wieder entfernt, Config konnte nicht gespeichert werden.	
-# 2.0.6		[Bugfix] Fehler bei Play() korrigiert
-#			[Bugfix] Fehler bei Zonen Scan in Verbindung mit Stereopaaren behoben
-# 2.0.7		[Bugfix] Fehler bei Wetterwarnungen und Orten die Umlaute enthalten korrigiert
-#			[Feature] Neue Funktion alarmoff um alle Sonos Alarme/Wecker auszuschalten
-#			[Feature] Neue Funktion alarmon um alle Sonos Alarme/Wecker wieder gemäß Ursprungszustand wieder einzuschalten
-# 2.0.8		[Bugfix] Korrektur Wetterwarnung bei Gruppendurchsage bzw. Stadt/Gemeinde mit Sonderzeichen
-#			[Feature] Time-to-destination-speech --> Ansage der ca. Fahrzeit von Standort zu einem Ziel (Google Maps)
-#			[Feature] Klickfunktion zapzone um sich durch die Sonos Komponenten zu zappen, falls aktuell keine Zone
-#					  spielt wird weiter durch die Radio Favoriten gezappt.
-#			[Feature] Fehler Mitteilung an MS nur noch wenn Sonos FEHLER auftrat (keine WARNUNG und keine INFO mehr)
-#			[Bugfix] Rückbau des Broadcast Scans bei Ersteinrichtung, Protokollierung hinzugefügt.
-#			[Feature] Ansage des Radiosenders bei nextradio oder zapzone (siehe Wiki)
-# 2.0.9		[Bugfix] Re-Gruppierung nach Einzelansage korrigiert
-#			[Feature] Neues Addon zur Ansage eines Abfallkalenders.
-#			[Feature] Neue Funktion (aus der Kategorie Spaß) say&witz = gibt einen Zufallswitz aus
-#			[Feature] Neue Funktion (aus der Kategorie Spaß) say&bauernregel = gibt die Bauernregel für den jeweiligen Tag aus
-# 2.1.0		[Feature] Prüfung auf gültige LoxBerry Version hinzugefügt
-#			[Feature] Prüfung auf korrekt beendete Plugin Installation hinzugefügt
-#			[Feature] Auswahl des LineIn Einganges bei PLAY:5, CONNECT und CONNECT:AMP wird unterstützt.
-#			[Feature] Angabe des Parameters standardvolume bei Gruppenauswahl für Playlist oder Radiosender wird jetzt unterstützt.
-#					  Es werden je Zone in der Gruppe die in der Config hinterlegten Sonos Volumen Einstellungen übernommen.
-#			[Feature] Bei der Abfallkalender Durchsage werden jetzt auch 2 Termine an einem Tag berücksichtigt
-#			[Bugfix] Optimierung der Wiederherstellung von Zonen Status nach erfolgter Einzeldurchsage wobei sich die Zone vorher in einer Gruppe befand
-#			[Feature] Unterstützung beim Scan für Sonos PLAYBASE und PLAY:1 mit Alexa wurde hinzugefügt.
-#			[Feature] Das Error LogFile ist über die LoxBerry Sonos Konfiguration errreichbar
-#			[Bugfix] Optimierung der Zonen Scan Funktion um Doppelscans zu verhindern
-#			[Bugfix] Beim Modell CONNECT kann die Lautstärke variabel oder festeingestellt sein, was eine T2S Ansage verhindert
-#					 Während einer T2S wird die Lautstärke temporär auf variabel gesetzt, dann wieder auf festeingestellt.
-#			[Bugfix] Bei Gruppennachrichten konnte der Parameter volume genutzt werden, wurde jetzt ersetzt durch groupvolume
-#			[Bugfix] Problem bei T2S auf PLAYBAR wenn diese im TV Modus ist behoben
-# 2.1.1		[Feature] Alle Dateien im "mp3" Verzeichnis werden vom Script jetzt automatisch auf Rechte 0644 gesetzt
-#			[Bugfix] Problem bei T2S auf PLAYBAR wenn diese im TV Modus ist behoben
-#			[Bugfix] Bei der Ansage des Müllkalenders wurde u.U. nichts angesagt wenn der erste vom CALDav Plugin ausgegebene Termin -1 ist.
-#		 	[Feature] Bei Befehlen an eine Zone welche Member einer Gruppe ist wird jetzt automatisch der Master ermittelt
-#					  dies gilt aber nur für folgende Befehle: play, stop, pause, next, previous, toggle, rewind, seek
-#			[Feature] bei ...messageid=..." können jetzt auch nicht numerische MP3 files (z.B. mein_sonos_gong) genutzt werden.
-# 2.1.2		[Feature] Debugging tool added
-#			[Bugfix] Korrektur beim Laden einer Playliste wenn vorher Radio/TV lief oder Mute EIN war
-#			[Bugfix] Korrektur der Lautstärkeregelung/Anpassung bei Gruppendurchsagen
-#			[Bugfix] Scan Zonen Funktion von LoxBerry auch für Non-LoxBerry Versionen aktualisiert und beide optimiert (Trennung von Gruppen vorm 
-#					 Speichern der Config)
-#			[Bugfix] Englische Version der GUI aktualisiert
-# 2.1.3		[Feature] Möglichkeit des Abspielens von Spotify, Amazon, Napster und Apple Playlisten/Alben (Details siehe Wiki)
-#			[Feature] Möglichkeit des Abspielens von lokalen Track's (NAS, USB-Sticks, Laufwerken, Remote PCs) -> Details siehe Wiki
-#			[Feature] Prüfung bei Gruppenfunktionen ob die angesprochene Zone (zone=...) auch der Master ist, falls nicht ermitelt das System den Master
-#			[Bugfix] Korrektur bei T2S wenn Playliste im Shufflemodus läuft
-#			[Feature] Funktion 'nextpush'. PL läuft -> next track, Ende PL -> 1st track, Radio -> nextradio im Loop, leer -> nextradio im Loop
-#			[Feature] Funktion 'next' und 'previous' optimiert. next - (letzter Track -> Track #1), 'previous - (erster Track -> letzter Track)
-# 2.1.4		[Bugfix] Funktion 'radio' (radioplaylist, groupradioplaylist) korrigiert. Bei input quelle SPDIF (Playbar, Playbase) 
-#					 wurde kein Radiosender geladen.
-#			[Bugfix] Korrektur der Zonen Scan Funktion (temporäre Datei wird nicht mehr gelöscht)
-#			[Bugfix] Korrektur der Zonen Scan Funktion nach Update Sonos auf 8.1
-#			[Bugfix] Korrektur bei Einzel T2S an Master einer Gruppe. Nach Durchsage wurde Urprungszustand nicht mehr wiederhergestellt
-#			[Bugfix] Erweiterung der TransportSettings (shuffle, repeat, etc.)
-# 2.1.5		[Bugfix] Korrektur der Zonen Scanfunktion für Nicht LoxBerry Nutzer
-#			[Feature] Neue Funktion zum Laden und Abspielen von Sonos Playlisten per Zufallsgenerator. Es könne auch Exceptions angegeben werden (siehe Wiki)
-#			[Feature] Neue Funktion zum Laden und Abspielen von Sonos Radiosender per Zufallsgenerator. Es könne auch Exceptions angegeben werden (siehe Wiki)
-#			[Feature] Aktualisierte Funktion um user-spezifische Playlisten zu laden (gilt nur für Spotify)
-# 2.1.6		[Bugfix] Fehler bei Non LoxBerry beseitigt, es wurde versucht eine LoxBerry Berechtigung zu setzen
-#			[Bugfix] SHUFFLE Wiedergabe wird jetzt nach erfolgter T2S korrekt weitergespielt
-# 2.1.7		Allgemeine Struktur überarbeitet und LoxBeryy 0.3.x Konpatibilität hergestellt
-#			Unterstützung für Non-LoxBerry User entfernt
-#			[Bugfix] Stabilere Scan Funktion nach Sonos Playern
-#			[Feature] Vicki als Stimme für Polly hinzugefügt	
-#			[Feature] Funktion batch optmiert um numerische, gespeicherte MP3 files aus dem tts/mp3 Verzeichnis zu inkludieren
-#
-#
-######## Script Code (ab hier bitte nichts ändern) ###################################
+##############################################################################################################################
 
-ini_set('max_execution_time', 120); // Max. Skriptlaufzeit auf 120 Sekunden
+ini_set('max_execution_time', 120); 							// Max. Skriptlaufzeit auf 120 Sekunden
 
 include("system/PHPSonos.php");
 include("system/Tracks.php");
@@ -148,51 +24,54 @@ include("Radio.php");
 include("Restore_T2S.php");
 include("Save_T2S.php");
 include("Speaker.php");
-require_once('system/function.debug.php');
-__debug(false); // true = enable or false = disable
+#require_once('system/function.debug.php');
+include('system/debug.php');
 
 // setze korrekte Zeitzone
 date_default_timezone_set(date("e"));
-$valid_playmodes = array("NORMAL","REPEAT_ALL","REPEAT_ONE","SHUFFLE_NOREPEAT","SHUFFLE","SHUFFLE_REPEAT_ONE");
-echo "<pre>"; 
+echo "<PRE>"; 
 
-if (!function_exists('posix_getpwuid')) {
-	$home = @getenv('DOCUMENT_ROOT');
-} else {
-	$home = posix_getpwuid(posix_getuid());
-	$home = $home['dir'];
-}
-$myIP = $_SERVER["SERVER_ADDR"];
+# prepare variables
+$home = $lbhomedir;
+$hostname = gethostname();										// hostname LoxBerry
+$myIP = $_SERVER["SERVER_ADDR"];								// get IP of LoxBerry
+$syntax = $_SERVER['REQUEST_URI'];								// get syntax
+$psubfolder = $lbpplugindir;									// get pluginfolder
+$lbversion = LBSystem::lbversion();								// get LoxBerry Version
+$path = LBSCONFIGDIR; 											// get path to general.cfg
+$myFolder = "$lbpconfigdir";									// get config folder
+#$myMessagepath = "//$myIP/sonos_tts/";							// get T2S folder to play
+#$myMessagepath = "//$hostname/plugindata/$psubfolder/tts/";	// get T2S folder to play
+$MessageStorepath = "$lbpdatadir/tts/";							// get T2S folder to store
+$pathlanguagefile = "$lbphtmldir/voice_engines/langfiles/";		// get languagefiles
+$logpath = "$lbplogdir/$psubfolder";							// get log folder
+$templatepath = "$lbptemplatedir";								// get templatedir
+$t2s_text_stand = "t2s-text_en.ini";							// T2S text Standardfile
+$sambaini = $lbhomedir.'/system/samba/smb.conf';				// path to Samba file smb.conf
+$searchfor = '[plugindata]';									// search for already existing Samba share
+$MP3path = "mp3";												// path to preinstalled numeric MP§ files
+$sleeptimegong = "3";											// waiting time before playing t2s
 
-$psubfolder = __FILE__;
-$psubfolder = preg_replace('/(.*)\/(.*)\/(.*)$/',"$2", $psubfolder);
-
-#-- Start Loxberry ------------------------------------------------------------------
+echo '<PRE>'; 
 	
-	$path = "$home/config/system/general.cfg";
-	$general = parse_ini_file($path, TRUE);
-	if ($general['BASE']['VERSION'] === "0.2.2") {
-		trigger_error('The Sonos4lox Plugin require minimum LoxBerry Version 0.2.3! Please upgrade LoxBerry', E_USER_NOTICE);
-		exit;
-	}
 
-	$myFolder = "$home/config/plugins/$psubfolder/";
-	$myMessagepath = "//$myIP/sonos_tts/";
-	$MessageStorepath = "$home/data/plugins/$psubfolder/tts/";
-	$pathlanguagefile = "$home/webfrontend/html/plugins/$psubfolder/voice_engines/langfiles/";
-	$logpath = "$home/log/plugins/$psubfolder";
+	
 
+#-- Start Preparation ------------------------------------------------------------------
+	
 	// Parsen der Konfigurationsdatei sonos.cfg
 	if (!file_exists($myFolder.'/sonos.cfg')) {
-		trigger_error('The file sonos.cfg could not be opened, please try again!', E_USER_NOTICE);
+		LOGGING('The file sonos.cfg could not be opened, please try again!', 4);
 	} else {
 		$tmpsonos = parse_ini_file($myFolder.'/sonos.cfg', TRUE);
+		$sonosconfig = "Sonos config has been loaded";
 	}
 	// Parsen der Sonos Zonen Konfigurationsdatei player.cfg
 	if (!file_exists($myFolder.'/player.cfg')) {
-		trigger_error('The file player.cfg  could not be opened, please try again!', E_USER_NOTICE);
+		LOGGING('The file player.cfg  could not be opened, please try again!', 4);
 	} else {
 		$tmpplayer = parse_ini_file($myFolder.'/player.cfg', true);
+		$playerconfig = "Player config has been loaded";
 	}
 	$player = ($tmpplayer['SONOSZONEN']);
 	foreach ($player as $zonen => $key) {
@@ -204,20 +83,12 @@ $psubfolder = preg_replace('/(.*)\/(.*)\/(.*)$/',"$2", $psubfolder);
 		
 	// Umbennennen des ursprünglichen Array Keys
 	$config['SYSTEM']['messageStorePath'] = $MessageStorepath;
-		
-#-- Ende Loxberry ---------------------------------------------------------------------
 
-#-- Start allgemeiner Teil ----------------------------------------------------------------------
+	// Übernahme und Deklaration von Variablen aus der Konfiguration
+	$sonoszonen = $config['sonoszonen'];
 
-$debug = $config['SYSTEM']['debuggen'];
-if($debug == 1) { 
-	echo "<pre><br>"; 
-}
- 
-// Übernahme und Deklaration von Variablen aus der Konfiguration
-$sonoszonen = $config['sonoszonen'];
-
-// prüft den Onlinestatus jeder Zone
+	// prüft den Onlinestatus jeder Zone
+	$performonlinecheck = "check Zones for Online mode will be executed";
 	foreach($sonoszonen as $zonen => $ip) {
 		$port = 1400;
 		$timeout = 3;
@@ -229,10 +100,50 @@ $sonoszonen = $config['sonoszonen'];
 	}
 	$sonoszone;
 	
-#$sonoszone = $sonoszonen;
-#print_r($sonoszone);
-#print_r($config);
-#exit;
+	// check if samba share "plugindata" or "sonos_tts" exist
+	$sambashare = array();
+	check_sambashare($sambaini, $searchfor, $sambashare);
+	$myMessagepath = $sambashare[0];					// get T2S folder Sonos to play
+		
+	#$sonoszone = $sonoszonen;
+	#print_r($sonoszone);
+	#print_r($config);
+	#exit;
+
+	# select language file for text-to-speech
+	$t2s_langfile = "t2s-text_".substr($config['TTS']['messageLang'],0,2).".ini";				// language file for text-speech
+
+	# checking size of LoxBerry logfile
+	check_size_logfile();
+
+	// check if getsonosinfo has been executed, if yes, skip LOGGING
+	$synlength = strlen($syntax);
+	$start = $synlength - 12;
+	$sonospush = substr($syntax, $start, 200);
+	if ($sonospush =='getsonosinfo')  {
+		#echo 'SONOS';
+	} else {
+		# create entry in logfile of called syntax
+		LOGGING("called syntax: ".$myIP."".$syntax,5);
+		LOGGING("All variables has been collected",7);
+		LOGGING("$sonosconfig",7);
+		LOGGING("$playerconfig",7);
+		LOGGING("$performonlinecheck",7);
+		LOGGING("All Zones are Online",6);
+		LOGGING("Sonos config has been loaded",7);
+		LOGGING("Configuration has been successful loaded",6);
+		LOGGING($sambashare[1],5);
+		LOGGING("Perform Logfile size check",7);
+		#LBlog::get_notifications_html($lbpplugindir, "Sonos");			// prepare for HTML notifications
+	}
+
+
+#-- End Preparation ---------------------------------------------------------------------
+
+
+#-- Start allgemeiner Teil ----------------------------------------------------------------------
+
+$valid_playmodes = array("NORMAL","REPEAT_ALL","REPEAT_ONE","SHUFFLE_NOREPEAT","SHUFFLE","SHUFFLE_REPEAT_ONE");
 
 # Start des eigentlichen Srcipts
 if(isset($_GET['volume']) && is_numeric($_GET['volume']) && $_GET['volume'] >= 0 && $_GET['volume'] <= 100) {
@@ -261,7 +172,7 @@ if(isset($_GET['playmode'])) {
 		$sonos->SetQueue("x-rincon-queue:".$sonoszone[$master][1]."#0");
 		$sonos->SetPlayMode($playmode);
 	}  else {
-		trigger_error('incorrect PlayMode selected. Please correct!', E_USER_NOTICE);
+		LOGGING('incorrect PlayMode selected. Please correct!', 4);
 	}
 }    
 
@@ -315,7 +226,7 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 					$sonos->Play();
 				}
 			} else {
-				trigger_error("No tracks in play list to play.", E_USER_NOTICE);
+				LOGGING("No tracks in play list to play.", 4);
 			}
 		break;
 		
@@ -369,13 +280,11 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 		case 'mute';
 			if($_GET['mute'] == 'false') {
 				$sonos->SetMute(false);
-				logging();
 			}
 			else if($_GET['mute'] == 'true') {
 				$sonos->SetMute(true);
-				logging();
 			} else {
-				trigger_error('Wrong Mute Parameter selected. Please correct', E_USER_NOTICE);
+				LOGGING('Wrong Mute Parameter selected. Please correct', 4);
 			}       
 		break;
 		
@@ -444,7 +353,7 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 			if (in_array($playmode, $valid_playmodes)) {
 				$sonos->SetPlayMode($playmode);
 			} else {
-				trigger_error('Wrong PlayMode Parameter selected. Please correct', E_USER_NOTICE);
+				LOGGING('Wrong PlayMode Parameter selected. Please correct', 4);
 			}    
 		break; 
 		
@@ -453,7 +362,7 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 			if((is_numeric($_GET['crossfade'])) && ($_GET['crossfade'] == 0) || ($_GET['crossfade'] == 1)) { 
 				$crossfade = $_GET['crossfade'];
 			} else {
-				trigger_error("Wrong Crossfade entered -> 0 = off / 1 = on", E_USER_NOTICE);
+				LOGGING("Wrong Crossfade entered -> 0 = off / 1 = on", 4);
 			}
 				$sonos->SetCrossfadeMode($crossfade);
 		break; 
@@ -481,9 +390,8 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 				} else{
 					$sonos->Play();
 				}
-			logging();
 			} else {
-				trigger_error("No tracks in Playlist to play.", E_USER_NOTICE);
+				LOGGING("No tracks in Playlist to play.", 5);
 			}
 		break;
 		
@@ -493,7 +401,7 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 			checkifmaster($master);
 			$sonos = new PHPSonos($sonoszone[$master][0]); //Sonos IP Adresse
 			$sonos->ClearQueue();
-			logging();
+			LOGGING("Queue has been cleared",7);
 		break;
 		
 		  
@@ -504,7 +412,7 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 					sendUDPdata();
 				}
 			} else {
-				trigger_error('Wrong range of values for the volume been entered, only 0-100 is permitted', E_USER_NOTICE);
+				LOGGING('Wrong range of values for the volume been entered, only 0-100 is permitted', 4);
 			}
 		break; 
 		
@@ -538,7 +446,7 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 				$loud = $_GET['loudness'];
 				$sonos->SetLoudness($loud);
 			} else {
-				trigger_error('Wrong LoudnessMode', E_USER_NOTICE);
+				LOGGING('Wrong LoudnessMode selected', 5);
 			}    
 		break;
 		
@@ -563,11 +471,13 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 
 		case 'addmember':
 			addmember();
+			LOGGING("Member has been added to ".$master,7);
 		break;
 
 		
 		case 'removemember':
 			removemember();
+			LOGGING("Member has been removed",7);
 		break;
 		
 		
@@ -594,7 +504,6 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 		
 							  
 		case 'sonosplaylist':
-			logging();
 			playlist();
 		break;
 		
@@ -602,34 +511,29 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 		case 'groupsonosplaylist':
 			AddMemberTo();
 			playlist();
-			logging();
 		break;
 		
 
 		case 'radioplaylist':
 			radio();
-			logging();
 		break;
 		
 		
 		case 'groupradioplaylist': 
 			AddMemberTo();
 			radio();
-			logging();
 		break;
 		
 		
 		case 'radio': 
 			AddMemberTo();
 			radio();
-			logging();
 		break;
 		
 		
 		case 'playlist':
 			AddMemberTo();
 			playlist();
-			logging();
 		break;
 		
 			
@@ -819,6 +723,7 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 		case 'becomegroupcoordinator':
 			echo '<PRE>';
 			$sonos->BecomeCoordinatorOfStandaloneGroup();
+			LOGGING("Zone ".$master." is playing in single mode", 7);
 			echo '</PRE>';
 		break;
 		
@@ -946,7 +851,7 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 				$state = $_GET['state'];
 				$sonos->SetLEDState($state);
 			} else {
-				trigger_error('Please correct input. Only On or off is allowed', E_USER_NOTICE);
+				LOGGING('Please correct input. Only On or off is allowed', 4);
 				echo '</PRE>';
 			}
 		break;
@@ -1195,10 +1100,10 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 		break;
 		  
 		default:
-		   trigger_error("This command is not known. <br>index.php?zone=SONOSPLAYER&action=FUNCTION&VALUE=Option", E_USER_NOTICE);
+		   LOGGING("This command is not known. <br>index.php?zone=SONOSPLAYER&action=FUNCTION&VALUE=Option", 4);
 		} 
 	} else 	{
-	trigger_error("The Zone ".$master." is not available or offline. Please check and if necessary add in the Config the zone", E_USER_NOTICE);
+	LOGGING("The Zone ".$master." is not available or offline. Please check and if necessary add in the Config the zone", 4);
 }
 
 # Funktionen für Skripte ------------------------------------------------------
@@ -1231,55 +1136,12 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
     }
 	if($debug == 1) { 
 		echo "<br>All files according to the criteria were successfully deleted";
+		LOGGING("All files according to the criteria were successfully deleted", 7);
 	}
     $folder->close();
     exit; 	 
  }
  
-
-/**
-/* Funktion : logging --> erstellt monatliche Log Datei
-/*
-/* @return: Log Datei
-**/
- function logging() {
- global $master, $log, $logpath, $general;
- 
- if ($general['BASE']['VERSION'] === "0.2.3") {
-
-	$format = "txt"; //Moeglichkeiten: csv und txt
- 	$datum_zeit = date("d.m.Y H:i:s");
-	$ip = $_SERVER["REMOTE_ADDR"];
-	$site = $_SERVER['REQUEST_URI'];
-	$browser = $master;
- 
-	$monate = array(1=>"Januar", 2=>"Februar", 3=>"Maerz", 4=>"April", 5=>"Mai", 6=>"Juni", 7=>"Juli", 8=>"August", 9=>"September", 10=>"Oktober", 11=>"November", 12=>"Dezember");
-	$monat = date("n");
-	$jahr = date("y");
- 
-	$dateiname=$logpath."/log_".$monate[$monat]."_$jahr.$format";
- 	$header = array("Datum/Uhrzeit", "    Zone  ", "Syntax");
-	$infos = array($datum_zeit, $master, $site);
- 	if($format == "csv") {
-		$eintrag= '"'.implode('", "', $infos).'"';
-	} else { 
-		$eintrag = implode("\t", $infos);
-	}
- 	$write_header = file_exists($dateiname);
- 	$datei=fopen($dateiname,"a");
- 	if(!$write_header) {
-		if($format == "csv") {
-			$header_line = '"'.implode('", "', $header).'"';
-		} else {
-			$header_line = implode("\t", $header);
-		}
-	fputs($datei, $header_line."\n");
-	}
-	fputs($datei,$eintrag."\n");
-	fclose($datei);
-	}
-}
-  
 
 /**
 /* Funktion : SetGroupVolume --> setzt Volume für eine Gruppe
@@ -1369,7 +1231,7 @@ function GetSonosFavorites() {
 			try {
 			#$sonos->AddToQueue($track);	
 			} catch (Exception $e) {
-#			trigger_error("The connection to Loxone could not be initiated!", E_USER_NOTICE);	
+#			LOGGING("The connection to Loxone could not be initiated!", 5);	
 		}	
 		}
 	}

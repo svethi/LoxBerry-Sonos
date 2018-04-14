@@ -7,25 +7,24 @@
 * @return: 
 **/
 function muellkalender() {
+	global $config, $home, $myIP;
 	
-	global $config;
+	#********************** NEW get text variables*********** ***********
+	$TL = LOAD_T2S_TEXT();
 	
-	$home = posix_getpwuid(posix_getuid());
-	$home = $home['dir'];
 	if (!file_exists("$home/webfrontend/html/plugins/caldav4lox/caldav.php")) {
-		trigger_error("The required Caldav-4-Lox Plugin is already not installed. Please install Plugin!", E_USER_ERROR);
+		LOGGING('The required Caldav-4-Lox Plugin is already not installed. Please install Plugin!',3);
 		exit;
 	}
-	$myIP = $_SERVER["SERVER_ADDR"];
 	if(substr($home,0,4) !== "/opt") {
-		trigger_error("The system you are using is not a loxberry. This application runs only on LoxBerry!", E_USER_ERROR);
+		LOGGING('The system you are using is not a loxberry. This application runs only on LoxBerry!',3);
 		exit;
 	}
 	// URL from Config
 	$url = $config['VARIOUS']['CALDavMuell'];
 	$checkdebug = strpos($url,"&debug");
 	if ($checkdebug != false) {
-		trigger_error("Please remove &debug from your syntax entry in Sonos4lox configuration!", E_USER_ERROR);
+		LOGGING('Please remove &debug from your syntax entry in Sonos4lox configuration!',3);
 		exit;
 	}
 	$callurl = trim($config['VARIOUS']['CALDavMuell'].'&debug');
@@ -40,7 +39,7 @@ function muellkalender() {
 	$checklength = strlen($url).'<br>';
 	$events = strpos($url, "events");
 	if ($events + 7 == $checklength){
-		trigger_error("Please remove &events= from your syntax entry in Sonos4lox configuration or enter add the events you are looking for!", E_USER_ERROR);
+		LOGGING('Please remove &events= from your syntax entry in Sonos4lox configuration or enter add the events you are looking for!',3);
 		exit;
 	}
 	if ($events === false) {
@@ -50,11 +49,11 @@ function muellkalender() {
 		#if($dienst['']['fwDay'] < 0) {
 		#	exit;
 		if(($dienst['']['fwDay'] === 0) AND ($Stunden >=4 && $Stunden <12)){
-			$welcomemorning = welcomemorning($text);
-			$speak = $welcomemorning." Hier noch einmal eine allerletzte Erinnerung. Gleich wird " . $dienst['']['Summary'] . " abgeholt. Falls die Muelltonne gestern nicht schon rausgestellt wurde wird es jetzt aber allerhöchste Zeit!";
+			$welcomemorning = welcomemorning();
+			$speak = $welcomemorning." ".$TL['WASTE-CALENDAR-TO-SPEECH']['TODAY_MORNING_START']." ".$dienst['']['Summary']." ".$TL['WASTE-CALENDAR-TO-SPEECH']['TODAY_MORNING_END'];
 		} elseif(($dienst['']['fwDay'] === 1) AND ($Stunden >=18)){
-			$welcomeevening = welcomeevening($text);
-			$speak = $welcomeevening." Ich bin es noch einmal. Morgen früh wird " . $dienst['']['Summary'] . " abgeholt. Falls die Muelltonne noch nicht vorm Haus steht bitte noch unbedingt daran denken sie raus zu stellen!. ";
+			$welcomeevening = welcomeevening();
+			$speak = $welcomeevening." ".$TL['WASTE-CALENDAR-TO-SPEECH']['EVENING_BEFORE_START']." ".$dienst['']['Summary']." ".$TL['WASTE-CALENDAR-TO-SPEECH']['EVENING_BEFORE_END'];
 		}
 	} else {
 		// prepare output using events
@@ -82,20 +81,22 @@ function muellkalender() {
 		#print_r($muellheute);
 		#print_r($muellmorgen);
 		// prepare speech
-		if ((count($muellheute)) === 1 AND ($Stunden >=0 && $Stunden <18)) {
-			$welcomemorning = welcomemorning($text);
-			$speak = $welcomemorning." Hier noch einmal eine allerletzte Erinnerung. Gleich wird " . $muellheute[0] . " abgeholt. Falls die Muelltonne gestern nicht schon rausgestellt wurde wird es jetzt aber allerhöchste Zeit!";
-		} elseif ((count($muellheute)) === 2 AND ($Stunden >=0 && $Stunden <18)) {
-			$welcomemorning = welcomemorning($text);
-			$speak = $welcomemorning." Hier noch einmal eine allerletzte Erinnerung. Gleich wird " . $muellheute[0] . " und " .$muellheute[1]. " abgeholt. Falls die Muelltonne gestern nicht schon rausgestellt wurde wird es jetzt aber allerhöchste Zeit!";
-		} elseif ((count($muellmorgen)) === 1 AND ($Stunden >=18 && $Stunden <24)) {
-			$welcomeevening = welcomeevening($text);
-			$speak = $welcomeevening." Ich bin es noch einmal. Morgen früh wird " . $muellmorgen[0] . " abgeholt. Falls die Muelltonne noch nicht vorm Haus steht bitte noch unbedingt daran denken sie raus zu stellen!. ";
-		} elseif ((count($muellmorgen)) === 2 AND ($Stunden >=18 && $Stunden <24)) {
-			$welcomeevening = welcomeevening($text);
-			$speak = $welcomeevening." Ich bin es noch einmal. Morgen früh wird " . $muellmorgen[0] . " und " .$muellmorgen[1]. " abgeholt. Falls die Muelltonne noch nicht vorm Haus steht bitte noch unbedingt daran denken sie raus zu stellen!. ";
+		if ((count($muellheute)) === 1 AND ($Stunden >=0 && $Stunden <11)) {
+			$welcomemorning = welcomemorning();
+			$speak = $welcomemorning." ".$TL['WASTE-CALENDAR-TO-SPEECH']['TODAY_MORNING_START']." ".$muellheute[0]." ".$TL['WASTE-CALENDAR-TO-SPEECH']['TODAY_MORNING_END'];
+		} elseif ((count($muellheute)) === 2 AND ($Stunden >=0 && $Stunden <11)) {
+			$welcomemorning = welcomemorning();
+			$speak = $welcomemorning." ".$TL['WASTE-CALENDAR-TO-SPEECH']['TODAY_MORNING_START']." ".$muellheute[0]." ".$TL['WASTE-CALENDAR-TO-SPEECH']['IN_CASE_2TIMES_WASTE']." ".$muellheute[1]." ".$TL['WASTE-CALENDAR-TO-SPEECH']['TODAY_MORNING_END'];
+		} elseif ((count($muellmorgen)) === 1 AND ($Stunden >=11 && $Stunden <24)) {
+			$welcomeevening = welcomeevening();
+			$speak = $welcomeevening." ".$TL['WASTE-CALENDAR-TO-SPEECH']['EVENING_BEFORE_START']." ".$muellmorgen[0]." ".$TL['WASTE-CALENDAR-TO-SPEECH']['EVENING_BEFORE_END'];
+		} elseif ((count($muellmorgen)) === 2 AND ($Stunden >=11 && $Stunden <24)) {
+			$welcomeevening = welcomeevening();
+			$speak = $welcomeevening." ".$TL['WASTE-CALENDAR-TO-SPEECH']['EVENING_BEFORE_START']." ".$muellmorgen[0]." ".$TL['WASTE-CALENDAR-TO-SPEECH']['IN_CASE_2TIMES_WASTE']." ".$muellmorgen[1]." ".$TL['WASTE-CALENDAR-TO-SPEECH']['EVENING_BEFORE_END'];
 		} elseif ((empty($muellheute)) or (empty($muellmorgen)))  {
-			echo 'Kein Abfalltermin für heute oder morgen im Kalender.';
+			$text = $TL['WASTE-CALENDAR-TO-SPEECH']['NO_WASTE_FOUND_ONLY_LOGGING'];
+			#echo $text;
+			LOGGING('Waste calendar: '.$text,6);
 			exit;
 		}
 	}
@@ -104,7 +105,9 @@ function muellkalender() {
 	}
 	#echo urlencode($speak);
 	#echo '<br><br>';
-	return urlencode($speak);
+	LOGGING('Waste calendar Announcement: '.$speak,7);
+	LOGGING('Message been generated and pushed to T2S creation',5);
+	return $speak;
 }
 
 	
@@ -116,24 +119,23 @@ function muellkalender() {
 **/	
 function calendar() {
 	
-	global $config;
+	global $config, $home, $myIP;
 	
-	$home = posix_getpwuid(posix_getuid());
-	$home = $home['dir'];
+	$TL = LOAD_T2S_TEXT();
+	
 	if (!file_exists("$home/webfrontend/html/plugins/caldav4lox/caldav.php")) {
-		trigger_error("The required Caldav-4-Lox Plugin is already not installed. Please install Plugin!", E_USER_ERROR);
+		LOGGING('The required Caldav-4-Lox Plugin is already not installed. Please install Plugin!',3);
 		exit;
 	}
-	$myIP = $_SERVER["SERVER_ADDR"];
 	if(substr($home,0,4) !== "/opt") {
-		trigger_error("The system you are using is not a loxberry. This application runs only on LoxBerry!", E_USER_ERROR);
+		LOGGING('The system you are using is not a loxberry. This application runs only on LoxBerry!',3);
 		exit;
 	}
 	$url = $config['VARIOUS']['CALDav2'];
 	$checklength = strlen($url).'<br>';
 	$checkdebug = @substr($url,$checklength - 5,$checklength);
 	if ($checkdebug == "debug") {
-		trigger_error("Please remove &debug from your syntax entry in Sonos4lox configuration!", E_USER_ERROR);
+		LOGGING('Please remove &debug from your syntax entry in Sonos4lox configuration!',3);
 		exit;
 	}
 	$callurl = trim($config['VARIOUS']['CALDav2'].'&debug');
@@ -159,9 +161,11 @@ function calendar() {
 			$monate = array("Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember");
 			$speak .= $calendar['']['Summary'] . " am " . $tage[$calendar['']['wkDay']] . " den ". date_format($zeit, 'd'). " " .$monate[date_format($zeit, 'm') - 1] ." um ". date_format($zeit, 'G:i');
 		}
-	#echo urlencode($speak);
+	#echo ($speak);
 	#echo '<br><br>';
-	return urlencode($speak);
+	LOGGING('Calendar Announcement: '.$speak,7);
+	LOGGING('Message been generated and pushed to T2S creation',5);
+	return $speak;
 	}
 }
 
@@ -172,17 +176,19 @@ function calendar() {
 * @return: 
 **/
 function welcomemorning() {
+	global $TL;
+	
 	$welcomearraymorning = array(
-		"Einen schönen guten Morgen!",
-		"Guten Morgen!",
-		"Hallo liebe Familie!",
-		"Guten Morgen alle zusammen!",
-		"Grüßt euch!",
-		"Servus!",
-		"Morgen!",
-		"Herzlich willkommen in der Küche!",
-		"Moin moin!",
-		"Seit gegrüßt!");
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_MORNING1'],
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_MORNING2'],
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_MORNING3'],
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_MORNING4'],
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_MORNING5'],
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_MORNING6'],
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_MORNING7'],
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_MORNING8'],
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_MORNING9']
+		);
 	$welcomemorning = $welcomearraymorning[array_rand($welcomearraymorning)];
 	return $welcomemorning;
 	}
@@ -195,13 +201,19 @@ function welcomemorning() {
 * @return: 
 **/
 function welcomeevening() {
+	global $TL;
+	
 	$welcomearrayevening = array(
-		"Einen schönen, guten Abend!",
-		"Guten Abend!",
-		"Hallo!",
-		"Hallo noch mal ihr zwei!",
-		"Abend!",
-		"Hallo, wie war euer Tag?");
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_EVENING1'],
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_EVENING2'],
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_EVENING3'],
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_EVENING4'],
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_EVENING5'],
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_EVENING6'],
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_EVENING7'],
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_EVENING8'],
+		$TL['WASTE-CALENDAR-TO-SPEECH']['RANDOM_WELCOME_EVENING9'],
+		);
 	$welcomeevening = $welcomearrayevening[array_rand($welcomearrayevening)];
 	return $welcomeevening;
 	}
